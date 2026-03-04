@@ -21,14 +21,8 @@ pipeline {
             post {
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-                    publishHTML([
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'JaCoCo Coverage Report'
-                    ])
+                    // JaCoCo report is generated but not published to UI
+                    // Coverage data available in target/site/jacoco/index.html
                 }
             }
         }
