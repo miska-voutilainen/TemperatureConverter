@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -14,35 +10,39 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean compile'
+                sh 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'mvn test'
+                sh 'mvn test'
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/*.xml'
-                    jacoco(
-                        execPattern: '**/target/jacoco.exec',
-                        classPattern: '**/target/classes',
-                        sourcePattern: '**/src/main/java'
-                    )
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/site/jacoco',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Coverage Report'
+                    ])
                 }
             }
         }
 
         stage('Package') {
             steps {
-                bat 'mvn package -DskipTests'
+                sh 'mvn package -DskipTests'
+                archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t temperatureconverter:latest .'
+                sh 'docker build -t temperatureconverter:latest .'
             }
         }
     }
@@ -53,6 +53,9 @@ pipeline {
         }
         failure {
             echo 'Pipeline failed.'
+        }
+        always {
+            cleanWs()
         }
     }
 }
