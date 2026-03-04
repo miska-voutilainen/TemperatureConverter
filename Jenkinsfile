@@ -33,12 +33,6 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar', allowEmptyArchive: true
             }
         }
-
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t temperatureconverter:latest .'
-            }
-        }
     }
 
     post {
