@@ -85,4 +85,23 @@ public class TemperatureConverterTest {
     void testKelvinToFahrenheit_absoluteZero() {
         assertEquals(-459.67, TemperatureConverter.kelvinToFahrenheit(0), 0.01);
     }
+    // --- isExtremeTemperature ---
+    @Test
+    void testIsExtremeTemperature_belowMinus40() {
+        assertTrue(TemperatureConverter.isExtremeTemperature(-41));
+        assertTrue(TemperatureConverter.isExtremeTemperature(-100));
+    }
+
+    @Test
+    void testIsExtremeTemperature_above50() {
+        assertTrue(TemperatureConverter.isExtremeTemperature(51));
+        assertTrue(TemperatureConverter.isExtremeTemperature(100));
+    }
+
+    @Test
+    void testIsExtremeTemperature_notExtreme() {
+        assertFalse(TemperatureConverter.isExtremeTemperature(-40));
+        assertFalse(TemperatureConverter.isExtremeTemperature(0));
+        assertFalse(TemperatureConverter.isExtremeTemperature(50));
+    }
 }
